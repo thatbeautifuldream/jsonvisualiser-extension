@@ -1,6 +1,6 @@
 {
-  "name": "sidepanel-extension-template",
-  "description": "A template for creating Chrome sidepanel extensions with React, Tailwind CSS, and shadcn/ui",
+  "name": "jsonvisualiser-extension",
+  "description": "Chrome sidepanel extension for JSON visualization",
   "private": true,
   "version": "1.0.0",
   "type": "module",
