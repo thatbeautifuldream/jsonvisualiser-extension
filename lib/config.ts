@@ -7,7 +7,7 @@ export const JSON_VISUALISER_CONFIG: TIframeViewerConfig = {
 
 type TAppConfig = {
   name: string;
-  iframe: IframeViewerConfig;
+  iframe: TIframeViewerConfig;
 };
 
 export const APP_CONFIG: TAppConfig = {
