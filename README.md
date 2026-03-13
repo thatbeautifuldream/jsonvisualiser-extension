@@ -16,6 +16,7 @@ It looks for pages that are basically just raw JSON. When it finds one, it repla
 
 - `manifest.json` registers the extension and injects `content.js` on pages.
 - `content.js` detects raw JSON pages, swaps the page for the iframe, and streams the JSON payload.
+- `icons/` contains the bundled extension icons referenced by the manifest.
 
 ## Streaming logic
 
@@ -46,5 +47,7 @@ The streaming logic was updated to be a bit safer:
 2. Enable Developer Mode.
 3. Click **Load unpacked**.
 4. Select this folder.
+
+Chrome reads the bundled icon files from the manifest `icons` field. The package script also includes the `icons/` directory in the Chrome Web Store zip, so the same artwork is used for unpacked and packaged installs.
 
 If you want `file://` JSON support later, add `file://*/*` to the match list and enable file URL access for the extension in Chrome.
