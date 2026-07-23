@@ -1,6 +1,6 @@
 {
   "name": "json-visualiser-extension",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "description": "Render any raw JSON page in Chrome with a full editor, tree view, and type generator. Fully self-contained - no external site.",
   "private": true,
   "type": "module",
