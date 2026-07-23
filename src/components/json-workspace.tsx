@@ -15,6 +15,7 @@ import { StatusBar } from "./status-bar";
 import { useJsonStore } from "@/store/json-store";
 import { TypeGeneratorDialog } from "./type-generator-dialog";
 import { ThemeSwitcher } from "./theme-switcher";
+import { RawToggleButton } from "./raw-toggle-button";
 import { useTheme } from "@/theme/theme-provider";
 import { unescapeJsonText } from "@/lib/unescape-json";
 
@@ -233,6 +234,7 @@ export function JsonWorkspace() {
           isValid={isValid}
           isVisible={activeTab === "editor"}
         />
+        <RawToggleButton sourceUrl={metadata.sourceUrl} />
         <ThemeSwitcher />
       </div>
     );
@@ -246,6 +248,7 @@ export function JsonWorkspace() {
     minifyJson,
     unescapeJson,
     clearEditor,
+    metadata.sourceUrl,
   ]);
 
   return (

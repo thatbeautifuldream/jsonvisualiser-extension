@@ -4,6 +4,11 @@ import cssText from "@/assets/content.css?inline";
 import App from "@/App";
 import { detectRawJson } from "@/lib/detect";
 import { useJsonStore } from "@/store/json-store";
+import { injectFloatingToggle } from "@/lib/floating-toggle";
+import {
+  isOriginDisabled,
+  setOriginDisabled,
+} from "@/lib/extension-state";
 
 const ROOT_ID = "json-visualiser-root";
 
@@ -17,10 +22,27 @@ function prettyPrint(text: string): string {
   }
 }
 
-function buildDocumentShell() {
+function deriveTitle(sourceUrl: string, originalTitle: string): string {
+  const trimmed = originalTitle.trim();
+  if (trimmed) return trimmed;
+
+  try {
+    const url = new URL(sourceUrl);
+    const segments = url.pathname.split("/").filter(Boolean);
+    const last = segments[segments.length - 1];
+    if (last) return decodeURIComponent(last);
+    return url.hostname;
+  } catch {
+    return "JSON";
+  }
+}
+
+function buildDocumentShell(preservedTitle: string) {
   const html = document.documentElement;
   html.innerHTML =
-    '<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>JSON Visualiser</title></head><body></body>';
+    '<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body></body>';
+
+  document.title = preservedTitle;
 
   const head = document.head;
   const style = document.createElement("style");
@@ -50,10 +72,10 @@ function render(detected: { text: string; contentType: string | null; sourceUrl:
     contentType: detected.contentType,
   });
 
-  const container = buildDocumentShell();
-  if (!container) return;
+  const preservedTitle = deriveTitle(detected.sourceUrl, document.title);
 
-  document.title = "JSON Visualiser";
+  const container = buildDocumentShell(preservedTitle);
+  if (!container) return;
 
   try {
     const root = createRoot(container);
@@ -89,11 +111,26 @@ export default defineContentScript({
   runAt: "document_start",
   allFrames: false,
   async main(ctx) {
-    // Runs at document_start, so <body> may not exist yet. Wait for it.
     await whenBodyReady();
 
     const detected = detectRawJson();
     if (!detected) return;
+
+    const origin = (() => {
+      try {
+        return new URL(detected.sourceUrl).origin;
+      } catch {
+        return detected.sourceUrl;
+      }
+    })();
+
+    if (await isOriginDisabled(origin)) {
+      injectFloatingToggle(ctx, async () => {
+        await setOriginDisabled(origin, false);
+        location.reload();
+      });
+      return;
+    }
 
     render(detected);
 
